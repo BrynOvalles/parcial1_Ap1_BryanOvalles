@@ -6,5 +6,5 @@ namespace parcial1_Ap1_BryanOvalles.DAL;
 public class Contexto : DbContext
 {
 	public Contexto(DbContextOptions<Contexto> options) : base(options) { }
-	public DbSet<Metas> metas { get; set; }
+	public DbSet<Metas> Metas { get; set; }
 }
