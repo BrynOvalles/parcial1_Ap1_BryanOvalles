@@ -9,9 +9,9 @@ namespace parcial1_Ap1_BryanOvalles.Models
 		[Required(ErrorMessage = "Es requerido intruducir una fecha")]
 		public DateOnly Fecha { get; set; } = new DateOnly();
 		[Required(ErrorMessage = "Es requerido que tenga una descripción")]
-		public string? descripcion { get; set; }
+		public string? Descripcion { get; set; }
 		[Required(ErrorMessage ="Es requerido que ingreses un monto para tu meta")]
-		public decimal monto { get; set; }
+		public decimal Monto { get; set; }
 
 	}
 }
