@@ -1,0 +1,110 @@
+﻿@page "/CrearMeta"
+@rendermode InteractiveServer
+@inject MetaServices metaService
+
+<PageTitle>Crear Metas</PageTitle>
+<EditForm Model="metas" OnValidSubmit="CrearMeta">
+	<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card shadow-lg">
+			<div class="card-header">
+				<h3><p>Crear Nueva Meta</p></h3>
+			</div>
+
+			<div class="card-body">
+				<label for="Meta">MetaId</label>
+				<InputNumber @bind-Value="metas.MetaId" class="id-input"></InputNumber>
+				<button class="btn btn-primary" @onclick="Buscar">Buscar</button>
+				<ValidationMessage For="@(() => metas.MetaId)" />
+			</div>
+
+			<div class="card-body">
+				<label for="Descripcion">Descripcion</label>
+				<InputText id="Descripcion" class="form-control" @bind-Value="metas.Descripcion" />
+				<ValidationMessage For="@(() => metas.Descripcion)" />
+			</div>
+
+			<div class="card-body">
+				<label for="Monto">Monto</label>
+				<InputNumber id="Monto" class="form-control" @bind-Value="metas.Monto" />
+				<ValidationMessage For="@(() => metas.Monto)" />
+			</div>
+
+			<div class="card-body">
+				<label>Fecha</label>
+				<InputDate @bind-Value="metas.Fecha" class="form-control input-group-sm" />
+				<ValidationMessage For="@(() => metas.Fecha)" />
+			</div>
+
+			<div>
+				<button type="submit" class="btn btn-primary">Guardar</button>
+				<button type="button" class="btn btn-secondary" @onclick="Nuevo">Nuevo</button>
+			</div>
+			@Mensaje
+		</div>
+	</div>
+
+
+</EditForm>
+
+@code {
+	private Metas metas = new Metas();
+	private string Mensaje = string.Empty;
+
+	private async Task CrearMeta()
+	{
+		if (!await Validar() && await metaService.Insertar(this.metas))
+		{
+			Nuevo();
+			Mensaje = "Se guardó correctamente.";
+		}
+		else
+		{
+			Nuevo();
+			Mensaje = "No se pudo guardar.";
+		}
+	}
+
+	private void Nuevo()
+	{
+		metas = new Metas();
+		Mensaje = string.Empty;
+	}
+
+	public async Task<bool> Validar()
+	{
+		var nombre = await metaService.Insertar(this.metas);
+
+		if (nombre != null)
+		{
+			Mensaje = "Error, Ya existe esta Meta.";
+			return true;
+		}
+		return false;
+	}
+
+	public async Task Buscar()
+	{
+		if (metas.MetaId <= 0)
+			Mensaje = "El campo Id es requerido";
+		else
+		{
+			var metasE = await metaService.Buscar(metas.MetaId);
+			if (metas != null)
+			{
+				metas = metasE;
+				Mensaje = "Meta encontrada";
+			}
+			else
+			{
+				Nuevo();
+				Mensaje = "Meta no encontrada";
+			}
+		}
+	}
+
+
+
+
+
+}
