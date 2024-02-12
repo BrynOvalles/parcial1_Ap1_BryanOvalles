@@ -1,10 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using parcial1_Ap1_BryanOvalles.Components;
+using parcial1_Ap1_BryanOvalles.DAL;
+using parcial1_Ap1_BryanOvalles.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContextFactory<Contexto>(options => options.UseSqlite(ConStr));
+builder.Services.AddScoped<MetaServices>();
 
 var app = builder.Build();
 
