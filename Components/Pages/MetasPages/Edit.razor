@@ -1,0 +1,115 @@
+﻿@page "/EditarMetas"
+@page "/EditarMetas/{clienteId:int}"
+
+@inject MetaServices metaServices;
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Editar Metas</PageTitle>
+<EditForm Model="metas" OnValidSubmit="Modificar" FormName="modificarMetas">
+	<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card shadow-lg">
+			<div class="card-header">
+				<h3><strong>Editar Metas</strong></h3>
+				<a href="/DetallesMetas">Detalles</a>
+			</div>
+			<div class="card-body">
+				<label>MetaId:</label>
+				<div class="col-6">
+					<InputNumber @bind-Value="metas.MetaId" class="id-input"></InputNumber>
+					<button type="button" class="btn btn-primary" @onclick="Buscar"><i class="bi bi-search"></i> Buscar</button>
+				</div>
+				<div class='row'>
+					<div class="col-4">
+						<label>Descripci&oacute;n:</label>
+						<InputText @bind-Value="metas.Descripcion" class="form-control input-group-sm"></InputText>
+						<ValidationMessage For="@(() => metas.Descripcion)" />
+					</div>
+					<div class="col-4">
+						<label>Monto:</label>
+						<InputNumber @bind-Value="metas.Monto" class="form-control input-group-sm"></InputNumber>
+						<ValidationMessage For="@(() => metas.Monto)" />
+					</div>
+				</div>
+				<div class='row'>
+					<div class="col-4">
+						<label>Fecha:</label>
+						<InputDate @bind-Value="metas.Fecha" class="form-control input-group-sm"></InputDate>
+						<ValidationMessage For="@(() => metas.Fecha)" />
+					</div>
+				</div>
+
+			</div>
+			<div class="card-footer d-flex justify-content-center">
+				<button type="submit" class="btn btn-outline-primary"><i class="bi bi-floppy-fill" /> Modificar</button>
+			</div>
+		</div>
+	</div>
+	@Mensaje
+</EditForm>
+
+@code {
+	[Parameter]
+	public int metaId { get; set; }
+	public Metas metas { get; set; } = new Metas();
+	public string Mensaje { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		metas = await metaServices.Buscar(metaId);
+	}
+
+	public async Task Modificar()
+	{
+		if (await Validar())
+			return;
+		else
+		{
+			var metaModificada = await metaServices.Insertar(metas);
+			if (metaModificada)
+			{
+				VolverAtras();
+			}
+			else
+				Mensaje = "No se pudo modificar la meta.";
+		}
+	}
+
+	public async Task<bool> Validar()
+	{
+		var nombre = await metaServices.BuscarDescripcion(metas.Descripcion);
+
+		if (nombre != null)
+		{
+			Mensaje = "Ya existe una Meta con esta Descripción.";
+			return true;
+		}
+		return false;
+	}
+
+	void VolverAtras()
+	{
+		NavigationManager.NavigateTo("/DetallesMetas");
+	}
+
+	public async Task Buscar()
+	{
+		if (metas.MetaId <= 0)
+			Mensaje = "Ingrese un ID válido.";
+		else
+		{
+			var metaEncontrada = await metaServices.Buscar(metas.MetaId);
+			if (metaEncontrada != null)
+			{
+				metas = metaEncontrada;
+				Mensaje = String.Empty;
+			}
+			else
+			{
+				Mensaje = "No se encontro ninguna meta con ese ID.";
+				await Task.Delay(2000);
+				VolverAtras();
+			}
+		}
+	}
+}
