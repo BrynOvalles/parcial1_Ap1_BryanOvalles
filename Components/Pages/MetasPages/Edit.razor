@@ -1,11 +1,11 @@
 ﻿@page "/EditarMetas"
-@page "/EditarMetas/{clienteId:int}"
+@page "/EditarMetas/{metaId:int}"
 
 @inject MetaServices metaServices;
 @inject NavigationManager NavigationManager;
 
 <PageTitle>Editar Metas</PageTitle>
-<EditForm Model="metas" OnValidSubmit="Modificar" FormName="modificarMetas">
+<EditForm Model="metas" OnValidSubmit="Modificar" FormName="modificarMeta">
 	<DataAnnotationsValidator />
 	<div class="container">
 		<div class="card shadow-lg">
