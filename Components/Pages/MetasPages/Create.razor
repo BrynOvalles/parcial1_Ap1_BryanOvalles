@@ -53,15 +53,19 @@
 
 	private async Task CrearMeta()
 	{
-		if (!await Validar() && await metaService.Insertar(this.metas))
+		if (!await Validar())
 		{
-			Nuevo();
-			Mensaje = "Se guardó correctamente.";
-		}
-		else
-		{
-			Nuevo();
-			Mensaje = "No se pudo guardar.";
+			if (await metaService.Insertar(this.metas))
+			{
+				Nuevo();
+				Mensaje = "Se guardó correctamente.";
+			}
+			else
+			{
+				Nuevo();
+				Mensaje = "No se pudo guardar.";
+			}
+
 		}
 	}
 
@@ -73,7 +77,7 @@
 
 	public async Task<bool> Validar()
 	{
-		var nombre = await metaService.Insertar(this.metas);
+		var nombre = await metaService.BuscarDescripcion(this.metas.Descripcion);
 
 		if (nombre != null)
 		{
@@ -82,6 +86,7 @@
 		}
 		return false;
 	}
+
 
 	public async Task Buscar()
 	{
@@ -102,9 +107,4 @@
 			}
 		}
 	}
-
-
-
-
-
 }
