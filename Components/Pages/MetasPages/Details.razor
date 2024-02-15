@@ -1,6 +1,7 @@
 ﻿@page "/DetallesMetas"
 @using System.Linq.Expressions
 @inject MetaServices metaServices
+@rendermode InteractiveServer
 
 <PageTitle>Detalles de las Metas</PageTitle>
 <div class="container">
@@ -25,13 +26,13 @@
 					@foreach (var meta in listaMetas)
 					{
 						<tr>
-							<td>@metas.MetaId</td>
-							<td>@metas.Descripcion</td>
-							<td>@metas.Fecha.ToShortDateString()</td>
-							<td>@metas.Monto.ToString("N2")</td>
+							<td>@meta.MetaId</td>
+							<td>@meta.Descripcion</td>
+							<td>@meta.Fecha.ToShortDateString()</td>
+							<td>@meta.Monto.ToString("N2")</td>
 							<td>
-								<a href="/EditarMetas/@metas.MetaId" class="btn btn-primary"> Editar<i class="bi bi-pencil-square"></i></a>
-								<a href="/EliminarMetas/@metas.MetaId" class="btn btn-danger">Eliminar<i class="bi bi-trash2"></i></a>
+								<a href="/EditarMetas/@meta.MetaId" class="btn btn-primary"> Editar<i class="bi bi-pencil-square"></i></a>
+								<a href="/EliminarMetas/@meta.MetaId" class="btn btn-danger">Eliminar<i class="bi bi-trash2"></i></a>
 							</td>
 						</tr>
 					}
@@ -46,11 +47,10 @@
 
 @code {
 	public Metas metas { get; set; } = new Metas();
-	public List<Metas> listaMetas= new List<Metas>();
+	public List<Metas> listaMetas = new List<Metas>();
 
 	protected override void OnInitialized()
 	{
-		Expression<Func<Metas, bool>> criterio = metas => metas.MetaId > 0;
-		listaMetas = metaServices.ObtenerLista(criterio);
+		listaMetas = metaServices.ObtenerLista(c => true);
 	}
 }
