@@ -1,11 +1,11 @@
 ﻿@page "/EditarMetas"
 @page "/EditarMetas/{metaId:int}"
-
+@rendermode InteractiveServer
 @inject MetaServices metaServices;
 @inject NavigationManager NavigationManager;
 
 <PageTitle>Editar Metas</PageTitle>
-<EditForm Model="metas" OnValidSubmit="Modificar" FormName="modificarMeta">
+<EditForm Model="metas" OnValidSubmit="Modificar">
 	<DataAnnotationsValidator />
 	<div class="container">
 		<div class="card shadow-lg">
@@ -51,7 +51,7 @@
 @code {
 	[Parameter]
 	public int metaId { get; set; }
-	public Metas metas { get; set; } = new Metas();
+	public Metas metas = new Metas();
 	public string Mensaje { get; set; } = string.Empty;
 
 	protected override async Task OnInitializedAsync()
@@ -61,17 +61,10 @@
 
 	public async Task Modificar()
 	{
-		if (await Validar())
-			return;
-		else
+		var metaModificada = await metaServices.Crear(metas);
+		if (metaModificada)
 		{
-			var metaModificada = await metaServices.Insertar(metas);
-			if (metaModificada)
-			{
-				VolverAtras();
-			}
-			else
-				Mensaje = "No se pudo modificar la meta.";
+			VolverAtras();
 		}
 	}
 
