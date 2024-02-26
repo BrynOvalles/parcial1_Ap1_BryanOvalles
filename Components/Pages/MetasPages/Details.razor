@@ -1,14 +1,16 @@
 ﻿@page "/DetallesMetas"
+@page "/DetallesMetas/{MetasId:int}";
 @using System.Linq.Expressions
 @inject MetaServices metaServices
 @rendermode InteractiveServer
+@inject NavigationManager navigationManager;
+
 
 <PageTitle>Detalles de las Metas</PageTitle>
 <div class="container">
 	<div class="card shadow-lg">
 		<div class="card-header">
 			<h3><b>Detalles de las Metas</b></h3>
-			<a href="/CrearMeta">Crear</a>
 		</div>
 		<div class="card-body">
 			<table class="table">
@@ -23,34 +25,45 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var meta in listaMetas)
-					{
 						<tr>
-							<td>@meta.MetaId</td>
-							<td>@meta.Descripcion</td>
-							<td>@meta.Fecha.ToShortDateString()</td>
-							<td>@meta.Monto.ToString("N2")</td>
-							<td>
-								<a href="/EditarMetas/@meta.MetaId" class="btn btn-primary"> Editar<i class="bi bi-pencil-square"></i></a>
-								<a href="/EliminarMetas/@meta.MetaId" class="btn btn-danger">Eliminar<i class="bi bi-trash2"></i></a>
-							</td>
+							<td>@metas.MetaId</td>
+							<td>@metas.Descripcion</td>
+							<td>@metas.Fecha.ToShortDateString()</td>
+							<td>@metas.Monto.ToString("N2")</td>
+							<td> </td>
 						</tr>
-					}
 				</tbody>
 			</table>
-		</div>
-		<div class="card-footer">
-			<p><b>Total de Metas:</b> @listaMetas.Count</p>
+			<button type="button" class="btn btn-outline-secondary " @onclick="Volver "> <i class="bi bi-arrow-return-left" /> Volver</button>
 		</div>
 	</div>
 </div>
 
 @code {
+	[Parameter]
+	public int MetasId { get; set; }
 	public Metas metas { get; set; } = new Metas();
-	public List<Metas> listaMetas = new List<Metas>();
 
 	protected override void OnInitialized()
 	{
-		listaMetas = metaServices.ObtenerLista(c => true);
+		if (MetasId > 0)
+		{
+			this.metas.MetaId = MetasId;
+			Buscar();
+		}
+	}
+
+	public async void Buscar()
+	{
+		var metaEncontrado = await metaServices.Buscar(metas.MetaId);
+		if (metaEncontrado != null)
+		{
+			this.metas = metaEncontrado;
+		}
+	}
+
+	public void Volver()
+	{
+		navigationManager.NavigateTo("Metas");
 	}
 }
