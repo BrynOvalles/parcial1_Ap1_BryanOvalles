@@ -10,6 +10,6 @@ public class Metas
 	[Required(ErrorMessage = "Es requerido que tenga una descripción")]
 	public string? Descripcion { get; set; }
 	[Required(ErrorMessage = "Es requerido que ingreses un monto para tu meta")]
-	[Range(minimum: 0, maximum: 10000000000000000000, ErrorMessage = "El monto debe ser mayor a 0 o es demasiado alto para el sistema")]
+	[Range(minimum: 0.1, maximum: 10000000000000000000, ErrorMessage = "El monto debe ser mayor a 0 o es demasiado alto para el sistema")]
 	public decimal Monto { get; set; }
 }
