@@ -1,6 +1,7 @@
 ﻿@page "/CrearMeta"
 @rendermode InteractiveServer
 @inject MetaServices metaService
+@inject NavigationManager navigationManager
 
 <PageTitle>Crear Metas</PageTitle>
 <EditForm Model="metas" OnValidSubmit="CrearMeta">
@@ -38,8 +39,10 @@
 			</div>
 
 			<div>
-				<button type="submit" class="btn btn-primary">Guardar</button>
-				<button type="button" class="btn btn-secondary" @onclick="Nuevo">Nuevo</button>
+				<button type="submit" class="btn btn-outline-success "><i class="bi bi-floppy-fill" /> Guardar</button>
+				<button type="button" class="btn btn-outline-primary" @onclick="Nuevo"><i class="bi bi-file-earmark"></i> Nuevo</button>
+				<button type="button" class="btn btn-outline-secondary " @onclick="Volver "> <i class="bi bi-arrow-return-left" /> Volver</button>
+
 			</div>
 			@Mensaje
 		</div>
@@ -88,24 +91,8 @@
 		return false;
 	}
 
-
-	public async Task Buscar()
+	void Volver()
 	{
-		if (metas.MetaId <= 0)
-			Mensaje = "El campo Id es requerido";
-		else
-		{
-			var metasE = await metaService.Buscar(metas.MetaId);
-			if (metas != null)
-			{
-				metas = metasE;
-				Mensaje = "Meta encontrada";
-			}
-			else
-			{
-				Nuevo();
-				Mensaje = "Meta no encontrada";
-			}
-		}
+		navigationManager.NavigateTo("Metas");
 	}
 }
