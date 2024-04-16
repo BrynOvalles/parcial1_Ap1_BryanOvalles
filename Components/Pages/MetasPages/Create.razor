@@ -1,6 +1,7 @@
 ﻿@page "/CrearMeta"
 @rendermode InteractiveServer
 @inject MetaServices metaService
+@inject NavigationManager navigationManager
 
 <PageTitle>Crear Metas</PageTitle>
 <EditForm Model="metas" OnValidSubmit="CrearMeta">
@@ -13,9 +14,10 @@
 
 			<div class="card-body">
 				<label for="Meta">MetaId</label>
+				<div>
 				<InputNumber @bind-Value="metas.MetaId" class="id-input"></InputNumber>
-				<button class="btn btn-primary" @onclick="Buscar">Buscar</button>
 				<ValidationMessage For="@(() => metas.MetaId)" />
+				</div>
 			</div>
 
 			<div class="card-body">
@@ -36,9 +38,11 @@
 				<ValidationMessage For="@(() => metas.Fecha)" />
 			</div>
 
-			<div>
-				<button type="submit" class="btn btn-primary">Guardar</button>
-				<button type="button" class="btn btn-secondary" @onclick="Nuevo">Nuevo</button>
+			<div class="card-footer">
+				<button type="submit" class="btn btn-outline-success "><i class="bi bi-floppy-fill" /> Guardar</button>
+				<button type="button" class="btn btn-outline-primary" @onclick="Nuevo"><i class="bi bi-file-earmark"></i> Nuevo</button>
+				<button type="button" class="btn btn-outline-secondary " @onclick="Volver "> <i class="bi bi-arrow-return-left" /> Volver</button>
+
 			</div>
 			@Mensaje
 		</div>
@@ -53,15 +57,19 @@
 
 	private async Task CrearMeta()
 	{
-		if (!await Validar() && await metaService.Insertar(this.metas))
+		if (!await Validar())
 		{
-			Nuevo();
-			Mensaje = "Se guardó correctamente.";
-		}
-		else
-		{
-			Nuevo();
-			Mensaje = "No se pudo guardar.";
+			if (await metaService.Insertar(this.metas))
+			{
+				Nuevo();
+				Mensaje = "Se guardó correctamente.";
+			}
+			else
+			{
+				Nuevo();
+				Mensaje = "No se pudo guardar.";
+			}
+
 		}
 	}
 
@@ -73,7 +81,7 @@
 
 	public async Task<bool> Validar()
 	{
-		var nombre = await metaService.Insertar(this.metas);
+		var nombre = await metaService.BuscarDescripcion(this.metas.Descripcion);
 
 		if (nombre != null)
 		{
@@ -83,28 +91,8 @@
 		return false;
 	}
 
-	public async Task Buscar()
+	void Volver()
 	{
-		if (metas.MetaId <= 0)
-			Mensaje = "El campo Id es requerido";
-		else
-		{
-			var metasE = await metaService.Buscar(metas.MetaId);
-			if (metas != null)
-			{
-				metas = metasE;
-				Mensaje = "Meta encontrada";
-			}
-			else
-			{
-				Nuevo();
-				Mensaje = "Meta no encontrada";
-			}
-		}
+		navigationManager.NavigateTo("Metas");
 	}
-
-
-
-
-
 }
